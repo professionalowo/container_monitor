@@ -5,15 +5,15 @@ use rocket::time::{Duration, OffsetDateTime};
 use rocket::State;
 use rocket::{
     form::{Form, FromForm},
-    fs::{relative, NamedFile},
+    fs::relative,
     get, launch, post,
     response::Redirect,
     routes,
 };
 use rocket_dyn_templates::{context, Template};
 
-mod middleware;
 mod containers;
+mod middleware;
 #[derive(FromForm)]
 struct LoginInput<'r> {
     username: &'r str,
@@ -62,7 +62,10 @@ fn rocket() -> _ {
     };
     rocket::build()
         .mount("/", routes![index, login, logout, post_login])
-        .mount("/containers", routes![containers::up, containers::down,containers::status])
+        .mount(
+            "/containers",
+            routes![containers::up, containers::down, containers::status],
+        )
         .mount("/public", rocket::fs::FileServer::from(relative!("public")))
         .attach(Template::fairing())
         .attach(middleware::UserInfo {
