@@ -47,4 +47,5 @@ function checkDiffs(containers, serverdata) {
 
 window.onbeforeunload = () => {
     socket.close();
+    syssocket.close();
 }
