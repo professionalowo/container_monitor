@@ -9,4 +9,6 @@ dotenv = "0.15.0"
 rocket = { version = "0.5.0", features = ["json"] }
 rocket_dyn_templates = { version = "0.1.0", features = ["handlebars"] }
 rocket_ws = "0.1.0"
+serde = { version = "1.0.197", features = ["derive"] }
+sysinfo = "0.30.7"
 tokio = { version = "1.36.0", features = ["full"] }

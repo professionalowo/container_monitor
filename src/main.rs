@@ -14,6 +14,7 @@ use rocket_dyn_templates::{context, Template};
 
 mod containers;
 mod middleware;
+mod process;
 #[derive(FromForm)]
 struct LoginInput<'r> {
     username: &'r str,
@@ -66,6 +67,7 @@ fn rocket() -> _ {
             "/containers",
             routes![containers::up, containers::down, containers::status],
         )
+        .mount("/sysinfo", routes![process::status])
         .mount("/public", rocket::fs::FileServer::from(relative!("public")))
         .attach(Template::fairing())
         .attach(middleware::UserInfo {
