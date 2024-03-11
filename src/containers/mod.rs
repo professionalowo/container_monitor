@@ -1,6 +1,4 @@
-use std::{thread, time::Duration};
-
-use docker_cargo::container::{Container, DockerError};
+use docker_cargo::container::Container;
 use rocket::{
     futures::{SinkExt, StreamExt},
     get,

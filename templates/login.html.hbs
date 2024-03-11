@@ -14,12 +14,16 @@
 </head>
 
 <body class="" data-bs-theme="dark">
-    <form method="post" action="/login">
-        <label for="username">Username:</label>
-        <input type="text" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" name="password" required>
-        <input type="submit" value="Login">
+    <form method="post" action="/login" class="rounded p-3">
+        <div class="mb-3">
+            <label for="username">Username:</label>
+            <input id="username" type="text" name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="password">Password:</label>
+            <input id="password" type="password" name="password" class="form-control" required>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Login"/>
     </form>
 </body>
 

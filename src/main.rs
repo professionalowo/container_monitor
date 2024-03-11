@@ -41,7 +41,7 @@ fn post_login(
         let cookie = Cookie::build(("session", calculate_hash(state.inner()).to_string()))
             .path("/")
             .secure(true)
-            .expires(OffsetDateTime::now_utc() + Duration::minutes(10))
+            .expires(OffsetDateTime::now_utc() + Duration::minutes(15))
             .http_only(true);
         cookies.add(cookie);
     }
