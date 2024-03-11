@@ -57,7 +57,7 @@ fn logout(cookies: &CookieJar<'_>) -> Redirect {
 fn rocket() -> _ {
     dotenv::dotenv().ok();
     let admin = AdminUser {
-        name: "admin".to_string(),
+        name: dotenv::var("ADMIN_NAME").unwrap(),
         password: dotenv::var("ADMIN_PW").unwrap(),
     };
     rocket::build()
