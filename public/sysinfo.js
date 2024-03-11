@@ -1,24 +1,24 @@
-const socket = new WebSocket(`ws://${window.location.host}/sysinfo`);
-let interval;
-socket.onopen = () => {
+const syssocket = new WebSocket(`ws://${window.location.host}/sysinfo`);
+let sysinterval;
+syssocket.onopen = () => {
     console.log('WebSocket connection established');
-    setInterval(() => {
-        socket.send('status');
+    sysinterval = setInterval(() => {
+        syssocket.send('status');
     }, 2000);
 }
 
-socket.onmessage = (event) => {
+syssocket.onmessage = (event) => {
     const info = JSON.parse(event.data);
     console.log(info);
 }
 
-socket.onclose = () => {
+syssocket.onclose = () => {
     console.log('WebSocket connection closed');
-    if (interval) {
+    if (sysinterval) {
         clearInterval(interval);
     }
 }
 
-socket.onerror = (error) => {
+syssocket.onerror = (error) => {
     alert(`WebSocket error: ${error}`);
 }
