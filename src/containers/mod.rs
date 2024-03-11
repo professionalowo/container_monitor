@@ -1,7 +1,12 @@
 use std::{thread, time::Duration};
 
 use docker_cargo::container::{Container, DockerError};
-use rocket::{futures::{SinkExt, StreamExt}, get, http::Status, post, serde};
+use rocket::{
+    futures::{SinkExt, StreamExt},
+    get,
+    http::Status,
+    post, serde,
+};
 
 #[post("/up/<id>")]
 pub fn up(id: &str) -> Status {
@@ -20,13 +25,15 @@ pub fn down(id: &str) -> Status {
 }
 
 #[get("/status")]
-pub fn status(ws: rocket_ws::WebSocket) -> rocket_ws::Channel<'static>{
-    ws.channel(move |mut stream| Box::pin(async move {
-        loop {
-            let containers = docker_cargo::container::get_all_containers().unwrap();
-            let serialized = serde::json::to_string(&containers).unwrap();
-            let _ = stream.send(serialized.into()).await;
-            thread::sleep(Duration::from_secs(5));
-        }   
-    }))
+pub fn status(ws: rocket_ws::WebSocket) -> rocket_ws::Channel<'static> {
+    ws.channel(move |mut stream| {
+        Box::pin(async move {
+            while let Some(_) = stream.next().await {
+                let containers = docker_cargo::container::get_all_containers().unwrap();
+                let serialized = serde::json::to_string(&containers).unwrap();
+                let _ = stream.send(serialized.into()).await;
+            }
+            Ok(())
+        })
+    })
 }
