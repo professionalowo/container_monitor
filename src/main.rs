@@ -1,5 +1,8 @@
 use docker_cargo::container::{self, Container};
-use middleware::AdminUser;
+use middleware::{calculate_hash, AdminUser};
+use rocket::http::{Cookie, CookieJar};
+use rocket::time::{Duration, OffsetDateTime};
+use rocket::State;
 use rocket::{
     form::{Form, FromForm},
     fs::{relative, NamedFile},
@@ -7,12 +10,10 @@ use rocket::{
     response::Redirect,
     routes,
 };
-use rocket::http::{Cookie, CookieJar};
 use rocket_dyn_templates::{context, Template};
 
 mod middleware;
-
-
+mod containers;
 #[derive(FromForm)]
 struct LoginInput<'r> {
     username: &'r str,
@@ -31,26 +32,48 @@ fn login() -> Template {
 }
 
 #[post("/login", data = "<form>")]
-fn post_login(form: Form<LoginInput<'_>>, cookies: &CookieJar<'_>) -> Redirect {
-    println!("username: {}, password: {}", form.username, form.password);
+fn post_login(
+    form: Form<LoginInput<'_>>,
+    cookies: &CookieJar<'_>,
+    state: &State<AdminUser>,
+) -> Redirect {
+    if form.username == state.name && form.password == state.password {
+        let cookie = Cookie::build(("session", calculate_hash(state.inner()).to_string()))
+            .path("/")
+            .secure(true)
+            .expires(OffsetDateTime::now_utc() + Duration::minutes(10))
+            .http_only(true);
+        cookies.add(cookie);
+    }
     Redirect::to("/")
 }
+#[get("/logout")]
+fn logout(cookies: &CookieJar<'_>) -> Redirect {
+    cookies.remove("session");
+    Redirect::to("/")
+}
+
 #[launch]
 fn rocket() -> _ {
+    dotenv::dotenv().ok();
+    let admin = AdminUser {
+        name: "admin".to_string(),
+        password: dotenv::var("ADMIN_PW").unwrap(),
+    };
     rocket::build()
-        .mount("/", routes![index, login, post_login])
+        .mount("/", routes![index, login, logout, post_login])
+        .mount("/containers", routes![containers::up, containers::down,containers::status])
         .mount("/public", rocket::fs::FileServer::from(relative!("public")))
         .attach(Template::fairing())
         .attach(middleware::UserInfo {
-            user: AdminUser {
-                name: "admin".to_string(),
-                password: "admin".to_string(),
-            },
+            user: admin.clone(),
             login_url: "/login".to_string(),
             exclude_urls: vec![
                 "/login".to_string(),
+                "/logout".to_string(),
                 "/public".to_string(),
                 "/favicon.ico".to_string(),
             ],
         })
+        .manage(admin.clone())
 }
