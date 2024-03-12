@@ -1,4 +1,4 @@
-const syssocket = new WebSocket(`wss://${window.location.host}/sysinfo`);
+const syssocket = new WebSocket(`${protocol}://${window.location.host}/sysinfo`);
 let sysinterval;
 syssocket.onopen = () => {
     console.log('WebSocket connection established');
