@@ -46,7 +46,7 @@ fn post_login(
             .secure(true)
             .expires(OffsetDateTime::now_utc() + Duration::minutes(15))
             .http_only(true);
-        cookies.add(cookie);
+        cookies.add_private(cookie);
     }
     Redirect::to("/")
 }

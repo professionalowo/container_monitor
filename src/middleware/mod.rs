@@ -45,7 +45,7 @@ impl Fairing for UserInfo {
             return;
         }
 
-        let user_cookie = req.cookies().get("session");
+        let user_cookie = req.cookies().get_private("session");
         match user_cookie {
             Some(cookie) => {
                 if cookie.value() != calculate_hash(&self.user).to_string() {
