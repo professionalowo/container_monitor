@@ -6,7 +6,6 @@ syssocket.onopen = () => {
 }
 
 
-
 syssocket.onclose = () => {
     console.log('WebSocket connection closed');
     if (sysinterval) {
@@ -26,7 +25,8 @@ const onChartLoad = function () {
     const ram = chart.series[1];
 
     sysinterval = setInterval(() => {
-        syssocket.send('status');
+        if (syssocket.readyState === 1)
+            syssocket.send('status');
     }, 1000);
 
     syssocket.onmessage = (event) => {
@@ -144,12 +144,12 @@ Highcharts.chart('chart', {
 
     series: [
         {
-            name: 'Cpu',
+            name: 'CPU',
             lineWidth: 2,
             color: Highcharts.getOptions().colors[2],
             data
         }, {
-            name: 'Ram',
+            name: 'RAM',
             lineWidth: 2,
             color: Highcharts.getOptions().colors[1],
             data
