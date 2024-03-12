@@ -27,7 +27,7 @@ pub fn status(ws: rocket_ws::WebSocket) -> rocket_ws::Channel<'static> {
 pub fn get_sys_info() -> SysInfo {
     let mut sys = System::new_all();
     sys.refresh_all();
-    let ram: f32 = sys.available_memory() as f32 / sys.used_memory() as f32;
+    let ram: f32 = sys.used_memory() as f32 / sys.available_memory() as f32 * 100.0;
     let cpu = sys.global_cpu_info().cpu_usage();
     SysInfo { ram, cpu }
 }
