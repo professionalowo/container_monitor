@@ -1,4 +1,3 @@
-const containers = Array.from(document.querySelectorAll('.docker'));
 const socket = new WebSocket(`ws://${window.location.host}/containers/status`);
 let interval;
 socket.onopen = () => {

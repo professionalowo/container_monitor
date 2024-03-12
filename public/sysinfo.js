@@ -8,9 +8,7 @@ syssocket.onopen = () => {
 
 syssocket.onclose = () => {
     console.log('WebSocket connection closed');
-    if (sysinterval) {
-        clearInterval(interval);
-    }
+    clearInterval(interval);
 }
 
 syssocket.onerror = (error) => {
