@@ -1,4 +1,4 @@
-const socket = new WebSocket(`ws://${window.location.host}/containers/status`);
+const socket = new WebSocket(`wss://${window.location.host}/containers/status`);
 let interval;
 socket.onopen = () => {
     console.log('WebSocket connection established');
